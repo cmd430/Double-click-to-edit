@@ -3,8 +3,8 @@
 class DoubleClickToEdit {
     getName() { return "Double click to edit"; }
     getDescription() { return "Double click messages to edit them."; }
-    getVersion() { return "9.0.1"; }
-    getAuthor() { return "Farcrada, original by Jiiks"; }
+    getVersion() { return "9.0.2"; }
+    getAuthor() { return "cmd430, forked from Farcrada"; }
 
     start() {
         let libraryScript = document.getElementById("ZLibraryScript");
@@ -24,7 +24,7 @@ class DoubleClickToEdit {
         }
         catch(err) {
             console.error(this.getName(), "fatal error, plugin could not be started!", err);
-            
+
             try {
                 this.stop();
             }
@@ -41,16 +41,16 @@ class DoubleClickToEdit {
     stop() {
         document.removeEventListener('dblclick', this.handler);
     }
-    
+
     handler(e) {
         let messagediv = e.target.closest('[class^=message]');
 
-        if (!messagediv)
+        if (!messagediv || !messagediv.classList.contains('da-zalgo'))
             return;
 
         let instance = messagediv[Object.keys(messagediv).find(key => key.startsWith("__reactInternal"))];
         let message = instance && findValue(instance, "message");
-        
+
         if (!message)
             return;
 
@@ -58,7 +58,7 @@ class DoubleClickToEdit {
             return;
 
         BdApi.findModuleByProps("receiveMessage", "editMessage").startEditMessage(message.channel_id, message.id, message.content);
-        
+
         function findValue (instance, searchkey) {
             var whitelist = {
                 memoizedProps: true,
@@ -68,9 +68,9 @@ class DoubleClickToEdit {
             var blacklist = {
                 contextSection: true
             };
-            
+
             return getKey(instance);
-            
+
             function getKey(instance) {
                 var result = undefined;
                 if (instance && !Node.prototype.isPrototypeOf(instance)) {
@@ -80,7 +80,7 @@ class DoubleClickToEdit {
 
                         if (key && !blacklist[key]) {
                             var value = instance[key];
-                            
+
                             if (searchkey === key)
                                 result = value;
 
